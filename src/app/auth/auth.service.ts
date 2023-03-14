@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RegisterPayload } from './register-payload';
 import { map, Observable } from 'rxjs';
-import { LoginPayload } from './login-payload';
+import { ILogin } from './login-payload';
 import { JwtAuthResponse } from './jwt-auth-response';
 import { LocalStorageService } from 'ngx-webstorage';
 
@@ -21,9 +21,9 @@ export class AuthService {
     return this.httpClient.post(this.url + 'signup', registerPayload);
   }
 
-  login(loginPayload: LoginPayload): Observable<any> {
+  login(body: ILogin): Observable<any> {
     return this.httpClient
-      .post<JwtAuthResponse>(this.url + 'login', loginPayload)
+      .post<JwtAuthResponse>(this.url + 'login', body)
       .pipe(
         map((data) => {
           this.localStorageService.store('token', data.token);

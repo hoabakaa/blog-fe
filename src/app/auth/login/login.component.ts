@@ -1,38 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { LoginPayload } from '../login-payload';
+import { ILogin } from '../login-payload';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  providers: [FormBuilder]
 })
 export class LoginComponent implements OnInit {
-
   loginForm!: FormGroup;
-  loginPayload!: LoginPayload;
 
-  constructor(private authService: AuthService, private router: Router){
-    this.loginForm = new FormGroup({
-      username: new FormControl,
-      password: new FormControl
-    });
-    this.loginPayload = {
-      username: '',
-      password: ''
-    }
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder){
+    this.initLoginForm();
+  }
+  initLoginForm() {
+    this.loginForm = this.fb.group({
+      userName: ['', [Validators.required]],
+      password: ['', [Validators.required]]
+    })
   }
 
   ngOnInit() {
+    this.loginForm.get('userName')?.valueChanges.subscribe((value) => {
+      console.log(value)
+    })
   }
 
   onSubmit(){
-    this.loginPayload.username = this.loginForm.get('username')?.value;
-    this.loginPayload.password = this.loginForm.get('password')?.value;
+    const valueLoginForm: ILogin = this.loginForm.value
 
-    this.authService.login(this.loginPayload).subscribe(data => {
+    this.authService.login(valueLoginForm).subscribe(data => {
       if(data){
         console.log('login success');
         this.router.navigateByUrl('/home');

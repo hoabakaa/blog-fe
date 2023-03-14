@@ -1,4 +1,4 @@
-export class LoginPayload {
-  username!: string;
-  password!: string;
+export interface ILogin {
+  userName: string;
+  password: string;
 }
